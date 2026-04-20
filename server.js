@@ -5,18 +5,27 @@ const port = process.env.PORT || 3000;
 // Маршрут /DDMMYY
 app.get('/:date', (req, res) => {
     const dateParam = req.params.date;
+    
+    // Проверяем, что параметр состоит ровно из 6 цифр
+    if (!/^\d{6}$/.test(dateParam)) {
+        return res.status(404).json({ error: "Not found" });
+    }
+
+    // Получаем текущую дату
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const yearShort = String(now.getFullYear()).slice(-2);
     const yearFull = now.getFullYear();
     
-    const expected = `${day}${month}${yearShort}`;
+    // Формируем ожидаемую строку (DDMMYY)
+    const expectedDate = `${day}${month}${yearShort}`;
     
-    if (dateParam === expected) {
+    // Сравниваем
+    if (dateParam === expectedDate) {
         res.json({
             date: `${day}-${month}-${yearFull}`,
-            login: "lisakorolkova"
+            login: "lisakorolkova" 
         });
     } else {
         res.status(404).json({ error: "Not found" });
