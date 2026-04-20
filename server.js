@@ -1,29 +1,32 @@
 const express = require('express');
 const app = express();
 
-// Маршрут /DDMMYY 
+// Функция (UTC+3)
+function getMoscowDate() {
+    const now = new Date();
+    // Прибавляем 3 часа для перехода в московский часовой пояс
+    const moscowTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    return moscowTime;
+}
+
+// Маршрут /DDMMYY
 app.get('/:date', (req, res) => {
     const dateParam = req.params.date;
-    
-    console.log('Requested date:', dateParam);
     
     // Проверяем формат 6 цифр
     if (!/^\d{6}$/.test(dateParam)) {
         return res.status(404).json({ error: "Not found" });
     }
     
-    // Текущая дата
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const yearShort = String(now.getFullYear()).slice(-2);
-    const yearFull = now.getFullYear();
+    // Получаем московскую дату
+    const now = getMoscowDate();
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const yearShort = String(now.getUTCFullYear()).slice(-2);
+    const yearFull = now.getUTCFullYear();
     
     // Ожидаемый формат DDMMYY
     const expected = `${day}${month}${yearShort}`;
-    
-    console.log('Expected:', expected);
-    console.log('Received:', dateParam);
     
     if (dateParam === expected) {
         res.json({
