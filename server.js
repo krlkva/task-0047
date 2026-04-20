@@ -1,31 +1,34 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Маршрут /DDMMYY
+// Маршрут /DDMMYY 
 app.get('/:date', (req, res) => {
     const dateParam = req.params.date;
     
-    // Проверяем, что параметр состоит ровно из 6 цифр
+    console.log('Requested date:', dateParam);
+    
+    // Проверяем формат 6 цифр
     if (!/^\d{6}$/.test(dateParam)) {
         return res.status(404).json({ error: "Not found" });
     }
-
-    // Получаем текущую дату
+    
+    // Текущая дата
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const yearShort = String(now.getFullYear()).slice(-2);
     const yearFull = now.getFullYear();
     
-    // Формируем ожидаемую строку (DDMMYY)
-    const expectedDate = `${day}${month}${yearShort}`;
+    // Ожидаемый формат DDMMYY
+    const expected = `${day}${month}${yearShort}`;
     
-    // Сравниваем
-    if (dateParam === expectedDate) {
+    console.log('Expected:', expected);
+    console.log('Received:', dateParam);
+    
+    if (dateParam === expected) {
         res.json({
             date: `${day}-${month}-${yearFull}`,
-            login: "lisakorolkova" 
+            login: "lisakorolkova"
         });
     } else {
         res.status(404).json({ error: "Not found" });
@@ -46,9 +49,10 @@ app.get('/api/rv/:str', (req, res) => {
 
 // Корневой маршрут
 app.get('/', (req, res) => {
-    res.send('Server is running');
+    res.send('Server is running. Use /210426/ or /api/rv/abc');
 });
 
-app.listen(port, () => {
+const port = process.env.PORT || 3000;
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
 });
