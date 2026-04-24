@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-const YOUR_LOGIN = 'lisakorolkova';  
+const LOGIN = 'lisakorolkova';  
 
 // Маршрут /DDMMYY
 app.get('/:datecode', (req, res) => {
@@ -28,7 +28,7 @@ app.get('/:datecode', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.json({
     date: formattedDate,
-    login: YOUR_LOGIN
+    login: LOGIN
   });
 });
 
