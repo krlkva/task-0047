@@ -1,58 +1,53 @@
 const express = require('express');
 const app = express();
+const PORT = 3000;
+
+const YOUR_LOGIN = 'lisakorolkova';  
 
 // Маршрут /DDMMYY
-app.get('/:date', (req, res) => {
-    const dateParam = req.params.date;
-    
-    console.log('Requested date:', dateParam);
-    
-    // Проверяем формат 6 цифр
-    if (!/^\d{6}$/.test(dateParam)) {
-        return res.status(404).json({ error: "Not found" });
-    }
-    
-    // Текущая дата
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const yearShort = String(now.getFullYear()).slice(-2);
-    const yearFull = now.getFullYear();
-    
-    // Ожидаемый формат DDMMYY
-    const expected = `${day}${month}${yearShort}`;
-    
-    console.log('Expected:', expected);
-    console.log('Received:', dateParam);
-    
-    if (dateParam === expected) {
-        res.json({
-            date: `${day}-${month}-${yearFull}`,
-            login: "lisakorolkova"
-        });
-    } else {
-        res.status(404).json({ error: "Not found" });
-    }
+app.get('/:datecode', (req, res) => {
+  const datecode = req.params.datecode;
+  
+  // Получаем текущую дату в формате DDMMYY (без разделителей)
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = String(now.getFullYear()).slice(-2); // последние 2 цифры года
+  const todayCode = `${day}${month}${year}`;
+  
+  // Проверяем, совпадает ли маршрут с сегодняшним DDMMYY
+  if (datecode !== todayCode) {
+    return res.status(404).send('Not Found');
+  }
+  
+  // Формируем дату в формате DD-MM-YYYY
+  const fullYear = now.getFullYear();
+  const formattedDate = `${day}-${month}-${fullYear}`;
+  
+  // Ответ в JSON
+  res.setHeader('Content-Type', 'application/json');
+  res.json({
+    date: formattedDate,
+    login: YOUR_LOGIN
+  });
 });
 
-// Маршрут /api/rv/abc
+// Маршрут /api/rv/abc (переворот строки)
 app.get('/api/rv/:str', (req, res) => {
-    const str = req.params.str;
-    
-    if (/^[a-z]+$/.test(str) && str.length >= 1) {
-        const reversed = str.split('').reverse().join('');
-        res.json({ result: reversed });
-    } else {
-        res.status(400).json({ error: "Only lowercase latin letters allowed" });
-    }
+  const str = req.params.str;
+  
+  // Проверка: только строчные латинские буквы, длина >= 1
+  const regex = /^[a-z]+$/;
+  if (!regex.test(str)) {
+    return res.status(400).json({ error: 'Только строчные буквы' });
+  }
+  
+  // Переворачиваем строку
+  const reversed = str.split('').reverse().join('');
+  res.json({ original: str, reversed: reversed });
 });
 
-// Корневой маршрут
-app.get('/', (req, res) => {
-    res.send('Server is running.');
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on port ${port}`);
+// Запуск сервера
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
