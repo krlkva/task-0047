@@ -32,19 +32,19 @@ app.get('/:datecode', (req, res) => {
   });
 });
 
-// Маршрут /api/rv/abc (переворот строки)
+// Маршрут /api/rv/abc 
 app.get('/api/rv/:str', (req, res) => {
   const str = req.params.str;
   
-  // Проверка: только строчные латинские буквы, длина >= 1
+  // Только строчные латинские буквы, длина >= 1
   const regex = /^[a-z]+$/;
   if (!regex.test(str)) {
-    return res.status(400).json({ error: 'Только строчные буквы' });
+    return res.status(400).send('Bad Request: only lowercase latin letters allowed');
   }
   
-  // Переворачиваем строку
+  // Переворачиваем и возвращаем строку
   const reversed = str.split('').reverse().join('');
-  res.json({ reversed: reversed });
+  res.send(reversed); 
 });
 
 // Запуск сервера
