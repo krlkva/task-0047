@@ -44,7 +44,7 @@ app.get('/api/rv/:str', (req, res) => {
   
   // Переворачиваем строку
   const reversed = str.split('').reverse().join('');
-  res.json({ original: str, reversed: reversed });
+  res.json({ reversed: reversed });
 });
 
 // Запуск сервера
